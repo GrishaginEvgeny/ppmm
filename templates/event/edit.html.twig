@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Event{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Редактировать мероприятие</h1>
+
+        {{ include('event/_form.html.twig', {'button_label': 'Редактировать'}) }}
+
+        <a class="px-2 mt-2 btn btn-primary" href="{{ path('app_home') }}">Назад</a>
+    </div>
+{% endblock %}

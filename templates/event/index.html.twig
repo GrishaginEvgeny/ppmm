@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event index{% endblock %}
+
+{% block body %}
+    <h1>Список мероприятий</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Уровень</th>
+                <th>Баллы</th>
+                <th>Название</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for event in events %}
+            <tr>
+                <td>{{ event.level }}</td>
+                <td>{{ event.points }}</td>
+                <td>{{ event.name }}</td>
+                {% if (eventStudents|filter(i => i.event.id == event.id and i.student.id == app.user.id)|first) == false %}
+                    <td><a class="btn btn-success" href="{{ path('app_event_link', {id: event.id}) }}">Подтвердить</a></td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">Нет записей</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="px-2 mt-2 btn btn-primary" href="{{ path('app_home') }}">Назад</a>
+{% endblock %}

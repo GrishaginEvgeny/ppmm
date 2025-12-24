@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reviewer{% endblock %}
+
+{% block body %}
+    <h1>Проверяющий</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>ФИО</th>
+                <td>{{ reviewer.fullName }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h1>Мероприятия</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Уровень</th>
+            <th>Баллы</th>
+            <th>Название</th>
+            <th>Статус проверки</th>
+            <th>Студент</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for eventItem in events %}
+            {% for studentItem in eventItem.students %}
+                <tr>
+                    <td>{{ eventItem.level }}</td>
+                    <td>{{ eventItem.points }}</td>
+                    <td>{{ eventItem.name }}</td>
+                    <td>{{ studentItem.status.value }}</td>
+                    <td>{{ studentItem.student.fullName }}</td>
+                    <td><a class="btn btn-primary" href="{{ path('app_event_show', {'id': eventItem.id}) }}">Перейти к проверке</a></td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6">Не найдено мероприятий</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_event_new') }}" class="mt-2 btn btn-lg btn-primary">
+        Создать мероприятие
+    </a>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event{% endblock %}
+
+{% block body %}
+    <h1>Мероприятие</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Уровень</th>
+                <td>{{ event.level }}</td>
+            </tr>
+            <tr>
+                <th>Баллы</th>
+                <td>{{ event.points }}</td>
+            </tr>
+            <tr>
+                <th>Название</th>
+                <td>{{ event.name }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if is_granted('IS_REVIEWER') %}
+    <h1>Заявители</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Статус</th>
+            <th>Студент</th>
+            <th>Ссылка на доказательство</th>
+                <th>
+                    Действия
+                </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for eventItem in students %}
+            <tr>
+                <td style="align-content: center">{{ eventItem.status.value }}</td>
+                <td style="align-content: center">{{ eventItem.student.fullName }}</td>
+                <td style="align-content: center"><a href="{{ eventItem.link }}">Ссылка</a></td>
+                <td>
+                    <a class="btn btn-success" href="{{ path('app_event_status_accept', {id: event.id, studentId: eventItem.student.id}) }}">Принять</a>
+                    <a class="btn btn-danger" href="{{ path('app_event_status_decline', {id: event.id, studentId: eventItem.student.id}) }}">Отказать</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">Не найдено мероприятий</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('app_event_edit', {'id': event.id}) }}">Редактировать</a>
+    {% endif %}
+
+    <a class="btn btn-primary" href="{{ path('app_home') }}">Назад</a>
+{% endblock %}

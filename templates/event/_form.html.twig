@@ -1,0 +1,6 @@
+{{ form_start(form) }}
+    <div class="container">
+        {{ form_widget(form) }}
+        <button class="mt-2 btn btn-lg btn-primary">{{ button_label|default('Создать') }}</button>
+    </div>
+{{ form_end(form) }}

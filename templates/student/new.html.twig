@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Student{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Добавить студента</h1>
+
+    {{ include('student/_form.html.twig') }}
+
+    <a class="mt-2 btn btn-lg btn-primary" href="{{ path('app_student_index') }}">Вернуться к списку</a>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+# translations/validators.ru.yaml
+
+This value should not be blank.: 'Это поле обязательно для заполнения.'
+
+This value is too short. It should have {{ limit }} characters or more.:
+    'Значение слишком короткое. Минимум {{ limit }} символов.'
+
+This value is too long. It should have {{ limit }} characters or less.:
+    'Значение слишком длинное. Максимум {{ limit }} символов.'
+
+This value should be greater than or equal to {{ compared_value }}.:
+    'Значение должно быть не меньше {{ compared_value }}.'
+
+This value should be less than or equal to {{ compared_value }}.:
+    'Значение должно быть не больше {{ compared_value }}.'
+
+This value is not valid.:
+    'Некорректное значение.'
+
+This value is not a valid email address.:
+    'Введите корректный email.'
+
+This value should be positive.:
+    'Данное значение должно быть неотрицательным'

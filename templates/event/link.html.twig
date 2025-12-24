@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+{% block title %}Link index{% endblock %}
+{% block body %}
+    <h1>Список мероприятий</h1>
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Уровень</th>
+            <td>{{ event.level }}</td>
+        </tr>
+        <tr>
+            <th>Баллы</th>
+            <td>{{ event.points }}</td>
+        </tr>
+        <tr>
+            <th>Название</th>
+            <td>{{ event.name }}</td>
+        </tr>
+        </tbody>
+    </table>
+{{ form_start(form) }}
+    {{ form_row(form.link) }}
+<button class="mt-2 btn btn-primary">Отправить</button>
+{{ form_end(form) }}
+
+    <a class="px-2 mt-2 btn btn-primary" href="{{ path('app_home') }}">Назад</a>
+{% endblock %}

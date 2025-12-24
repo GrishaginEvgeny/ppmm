@@ -1,0 +1,29 @@
+security:
+    password_hashers:
+        App\Entity\Student:
+            algorithm: auto
+
+        App\Entity\Reviewer:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            id: App\Security\AppUserProvider
+
+    firewalls:
+        main:
+            pattern: ^/
+            provider: app_user_provider
+
+            access_denied_handler: App\Security\AccessDeniedHandler
+
+            custom_authenticators:
+                - App\Security\LoginFormAuthenticator
+
+            logout:
+                path: app_logout
+                target: app_login
+
+    access_control:
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
