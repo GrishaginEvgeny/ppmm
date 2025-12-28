@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Event{% endblock %}
+{% block title %}Мероприятие {{ event.name }}{% endblock %}
 
 {% block body %}
     <h1>Мероприятие</h1>
@@ -42,8 +42,10 @@
                 <td style="align-content: center">{{ eventItem.student.fullName }}</td>
                 <td style="align-content: center"><a href="{{ eventItem.link }}">Ссылка</a></td>
                 <td>
+                   {% if eventItem.status.value != 'отказано' and eventItem.status.value != 'одобрено' %}
                     <a class="btn btn-success" href="{{ path('app_event_status_accept', {id: event.id, studentId: eventItem.student.id}) }}">Принять</a>
                     <a class="btn btn-danger" href="{{ path('app_event_status_decline', {id: event.id, studentId: eventItem.student.id}) }}">Отказать</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
@@ -53,6 +55,10 @@
         {% endfor %}
         </tbody>
     </table>
+
+        <div class="pagination content-center">
+            {{ knp_pagination_render(students,  '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+        </div>
 
     <a class="btn btn-primary" href="{{ path('app_event_edit', {'id': event.id}) }}">Редактировать</a>
     {% endif %}

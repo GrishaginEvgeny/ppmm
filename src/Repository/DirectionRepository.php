@@ -16,20 +16,18 @@ class DirectionRepository extends ServiceEntityRepository
         parent::__construct($registry, Direction::class);
     }
 
-//    /**
-//     * @return Direction[] Returns an array of Direction objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('d')
-//            ->andWhere('d.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('d.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function countApplicationsByDirection(): array
+    {
+        return $this->createQueryBuilder('d')
+            ->select('d.name AS name, COUNT(es.student) AS total')
+            ->join('d.events', 'e')
+            ->join('e.students', 'es')
+            ->groupBy('d.id')
+            ->orderBy('total', 'DESC')
+            ->indexBy('d', 'd.name')
+            ->getQuery()
+            ->getArrayResult();
+    }
 
 //    public function findOneBySomeField($value): ?Direction
 //    {

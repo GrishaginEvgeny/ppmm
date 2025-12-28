@@ -46,6 +46,11 @@ class Student extends AbstractUser
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
+    #[ORM\Column]
+    #[GreaterThanOrEqual(1)]
+    #[LessThanOrEqual(5)]
+    private ?int $course = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -154,6 +159,18 @@ class Student extends AbstractUser
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getCourse(): ?int
+    {
+        return $this->course;
+    }
+
+    public function setCourse(int $course): static
+    {
+        $this->course = $course;
 
         return $this;
     }

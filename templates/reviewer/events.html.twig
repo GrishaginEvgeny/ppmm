@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Проверяющий {{ reviewer.fullName }}: мероприятия{% endblock %}
+
+{% block body %}
+    <h1>Мероприятия</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Уровень</th>
+            <th>Баллы</th>
+            <th>Название</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for eventItem in pagination %}
+                <tr>
+                    <td>{{ eventItem.level }}</td>
+                    <td>{{ eventItem.points }}</td>
+                    <td>{{ eventItem.name }}</td>
+                    <td><a class="btn btn-primary" href="{{ path('app_event_show', {'id': eventItem.id}) }}">Перейти к проверке</a></td>
+                </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">Не найдено мероприятий</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination content-center">
+        {{ knp_pagination_render(pagination,  '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+    </div>
+
+    <a href="{{ path('app_event_new') }}" class="mt-2 btn btn-lg btn-primary">
+        Создать мероприятие
+    </a>
+{% endblock %}

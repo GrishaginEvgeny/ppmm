@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Direction;
+use App\Entity\EventStudent;
 use App\Entity\Student;
+use App\Enum\Status;
 use App\Form\StudentType;
 use App\Repository\StudentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,7 +67,7 @@ final class StudentController extends AbstractController
 
     #[IsGranted('IS_STUDENT')]
     #[Route('/{id}', name: 'app_student_show', methods: ['GET'])]
-    public function show(int $id): Response
+    public function show(int $id, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
     {
         /** @var Student $actualUser */
         $actualUser = $this->getUser();
@@ -75,11 +79,40 @@ final class StudentController extends AbstractController
             );
         }
 
-        $events = $actualUser->getEvents();
+        $query = $entityManager->getRepository(EventStudent::class)
+            ->createQueryBuilder('es')
+            ->select('es', 'e', 'd')
+            ->join('es.student', 's', 's.id = es.student_id')
+            ->join('es.event', 'e', 'e.id = es.event_id')
+            ->join('e.direction', 'd', 'e.direction_id = d.id')
+            ->andWhere('s.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getArrayResult();
+
+        $pagination = $paginator->paginate(
+            $query, /* Doctrine Query, QueryBuilder, or array */
+            $request->query->getInt('page', 1), /* current page number */
+            5 /* items per page */
+        );
+
+        $qb = $entityManager->getRepository(Direction::class)
+            ->createQueryBuilder('d')
+            ->leftJoin('d.events', 'e') // все события направления
+            ->leftJoin('e.students', 'es', 'WITH', 'es.student = :studentId') // события студента
+            ->select('d.name AS direction_name')
+            ->addSelect('COALESCE(SUM(CASE WHEN es.status = :accepted THEN e.points ELSE 0 END), 0) AS total_points')
+            ->setParameter('studentId', $id)
+            ->setParameter('accepted', Status::ACCEPTED)
+            ->groupBy('d.name')
+            ->orderBy('d.name', 'DESC');
+
+        $summary = $qb->getQuery()->getArrayResult();
 
         return $this->render('student/show.html.twig', [
             'student' => $actualUser,
-            'events' => $events,
+            'events' => $pagination,
+            'summary' => $summary,
         ]);
     }
 }

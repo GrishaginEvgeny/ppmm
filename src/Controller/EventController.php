@@ -11,6 +11,7 @@ use App\Form\EventType;
 use App\Form\LinkType;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -31,10 +32,20 @@ final class EventController extends AbstractController
 
     #[IsGranted('IS_STUDENT')]
     #[Route('', name: 'app_event_index', methods: ['get'])]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
     {
+        $query = $entityManager->getRepository(Event::class)
+            ->createQueryBuilder('e')
+            ->getQuery();
+
+        $pagination = $paginator->paginate(
+            $query, /* Doctrine Query, QueryBuilder, or array */
+            $request->query->getInt('page', 1), /* current page number */
+            10 /* items per page */
+        );
+
         return $this->render('event/index.html.twig', [
-            'events' => $entityManager->getRepository(Event::class)->findAll(),
+            'events' => $pagination,
             'user' => $this->getUser(),
             'eventStudents' => $entityManager->getRepository(EventStudent::class)->findAll(),
         ]);
@@ -65,7 +76,7 @@ final class EventController extends AbstractController
         new Expression("is_granted('IS_STUDENT') or is_granted('IS_REVIEWER')")
     )]
     #[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
-    public function show(int $id, EntityManagerInterface $entityManager): Response
+    public function show(int $id, EntityManagerInterface $entityManager, Request $request, PaginatorInterface $paginator): Response
     {
         $event = $entityManager->getRepository(Event::class)->find($id);
 
@@ -78,11 +89,19 @@ final class EventController extends AbstractController
         /** @var Reviewer|Student $actualUser */
         $actualUser = $this->getUser();
 
-        if ($actualUser instanceof Student && !$actualUser->getEvents()->contains($event))
+        if ($actualUser instanceof Student)
         {
-            return new RedirectResponse(
-                $this->urlGenerator->generate('app_student_show',  ['id' => $actualUser->getId()])
-            );
+            $eventStudent = $entityManager->getRepository(EventStudent::class)
+                ->findOneBy([
+                    'event' => $event,
+                    'student' => $actualUser,
+                ]);
+
+            if (null === $eventStudent) {
+                return new RedirectResponse(
+                    $this->urlGenerator->generate('app_student_show', ['id' => $actualUser->getId()])
+                );
+            }
         }
 
         if ($actualUser instanceof Reviewer && $actualUser->getDirection() !== $event->getDirection())
@@ -92,9 +111,25 @@ final class EventController extends AbstractController
             );
         }
 
+        $query = $entityManager->getRepository(EventStudent::class)
+            ->createQueryBuilder('es')
+            ->select('es', 's')
+            ->join('es.student', 's', 's.id = es.student_id')
+            ->join('es.event', 'e', 'e.id = es.event_id')
+            ->andWhere('e.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getArrayResult();
+
+        $pagination = $paginator->paginate(
+            $query, /* Doctrine Query, QueryBuilder, or array */
+            $request->query->getInt('page', 1), /* current page number */
+            10 /* items per page */
+        );
+
         return $this->render('event/show.html.twig', [
             'event' => $event,
-            'students' => $event->getStudents(),
+            'students' => $pagination,
         ]);
     }
 

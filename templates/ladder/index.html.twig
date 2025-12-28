@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Лучшие: {{ name }}{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+     <h1>Студенты, проходящие на ПГАС по направлению: {{ name }}</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Место</th>
+            <th>Имя</th>
+            <th>Баллы</th>
+            <th>Рейтинг</th>
+            <th>Курс</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for place, student in students %}
+            <tr>
+                <td>{{ place + 1 }}</td>
+                <td>{{ student.student_name }}</td>
+                <td>{{ student.total_points }}</td>
+                <td>{{ student.rating }}</td>
+                <td>{{ student.course }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Не найдено подходящий студентов</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="5">Всего мест доступно: {{ available }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <a class="btn btn-primary" href="{{ path('app_home') }}">Назад</a>
+</div>
+{% endblock %}

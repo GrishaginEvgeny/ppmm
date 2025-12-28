@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Student{% endblock %}
+{% block title %}Студент: {{ student.fullName }}{% endblock %}
 
 {% block body %}
     <h1>Профиль студента</h1>
@@ -34,6 +34,7 @@
             <th>Баллы</th>
             <th>Статус проверки</th>
             <th>Название</th>
+            <th>Направление</th>
         </tr>
         </thead>
         <tbody>
@@ -43,10 +44,36 @@
                 <td>{{ eventItem.event.points }}</td>
                 <td>{{ eventItem.status.value }}</td>
                 <td>{{ eventItem.event.name }}</td>
+                <td>{{ eventItem.event.direction.name }}</td>
             </tr>
         {% else %}
             <tr>
                 <td colspan="6">Не найдено мероприятий</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination content-center">
+        {{ knp_pagination_render(events,  '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+    </div>
+
+    <h1>Сводная таблица по баллам:</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Направление</th>
+            <th>Сумма баллов</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in summary %}
+            <tr>
+                <td>{{ row.direction_name }}</td>
+                <td>{{ row.total_points }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">Данные не найдены</td>
             </tr>
         {% endfor %}
         </tbody>

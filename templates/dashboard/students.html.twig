@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Графики: студенты{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+    <div class="example-wrapper">
+        <canvas id="scatterChart"></canvas>
+        <canvas class="mt-4" id="institutePieChart"></canvas>
+
+        <a class="px-2 mt-2 btn btn-primary" href="{{ path('app_home') }}">Назад</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById('scatterChart');
+
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: '{{ points_name }}',
+                    data: {{ points|raw }},
+                    pointBackgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: { display: true, text: '{{ x_name }}' },
+                        min: 0,  // или min/max по твоему диапазону рейтингов
+                        max: 100
+                    },
+                    y: {
+                        title: { display: true, text: '{{ y_name }}' },
+
+                    }
+                },
+                plugins: {
+                    legend: { display: true }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('institutePieChart');
+
+        new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: {{ labels|raw }},
+                datasets: [{
+                    data: {{ values|raw }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'right' },
+                    title: {
+                        display: true,
+                        text: '{{ pie_name }}'
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

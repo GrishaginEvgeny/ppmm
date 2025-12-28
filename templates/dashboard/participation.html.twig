@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Графики: мероприятия{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <canvas class="mt-4" id="myChart"></canvas>
+    <canvas class="mt-4" id="myPieChart"></canvas>
+
+    <a class="px-2 mt-2 btn btn-primary" href="{{ path('app_home') }}">Назад</a>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ labels|raw }},
+                datasets: [{
+                    label: '{{ name }}',
+                    data: {{ values|raw }},
+                    borderWidth: 2
+                }]
+            }
+        });
+        const ctx2 = document.getElementById('myPieChart');
+
+        new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: {{ labels|raw }},
+                datasets: [{
+                    data: {{ values|raw }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'right' },
+                    title: {
+                        display: true,
+                        text: '{{ name }}'
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

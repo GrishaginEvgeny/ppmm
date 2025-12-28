@@ -7,6 +7,7 @@ use App\Entity\Event;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,8 +20,9 @@ class EventType extends AbstractType
             ->add('level', TextType::class, [
                 'label' => 'Уровень мерориятия'
             ])
-            ->add('points', IntegerType::class, [
-                'label' => 'Баллы'
+            ->add('points', NumberType::class, [
+                'label' => 'Баллы',
+                'scale' => 1,
             ])
             ->add('name', TextType::class, [
                 'label' => 'Название мероприятия'
